@@ -50,6 +50,8 @@ const register = async (req, res) => {
 };
 const login = async (req, res) => {
   try {
+    console.log('leak');
+    
     const { email, password } = req.body;
 
     if (!email || !password)

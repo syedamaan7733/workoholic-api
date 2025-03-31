@@ -15,17 +15,17 @@ const router = require("express").Router();
 
 router
   .route("/create")
-  .post(authenticateUser, authorizeUser(["admin"]), createEmployee);
+  .post(authenticateUser, authorizeUser("admin"), createEmployee);
 
 router.route("/getAll").get(getAllEmployee);
 
 router
   .route("/:empId")
   .get(getSingleEmployee)
-  .patch(authenticateUser, updateEmployeeData)
+  .patch(authenticateUser, authorizeUser("admin"), updateEmployeeData)
   .delete(
     authenticateUser,
-    authorizeUser(["admin"]),
+    authorizeUser("admin"),
     preDelMeneaur,
     deleteEmployeeData
   );

@@ -1,18 +1,11 @@
 const Employees = require("../models/Employees.model");
-const { param } = require("../routes/auth.route");
 
 // Admin can
 //create
 const createEmployee = async (req, res) => {
   try {
-    const {
-      fullName,
-      email,
-      phone,
-      empInfo: { PublicDocumentNumber },
-    } = req.body;
-
-    if (!fullName || !email || !phone || !PublicDocumentNumber)
+    const { firstName, lastName, email, phone } = req.body;
+    if (!firstName || !lastName || !email || !phone)
       res.status(400).json({ error: "Please provide the valid input." });
 
     const employee = await Employees.create({ ...req.body });
@@ -40,14 +33,18 @@ const getAllEmployee = async (req, res) => {
       .skip(skip)
       .limit(limitNumber);
 
-    res.status(200).json({ employees });
+    const totalCount = await Employees.countDocuments()
+    const totalpages = Math.ceil(totalCount/limitNumber)
+
+
+    res.status(200).json({ employees, totalCount, totalpages,  });
   } catch (error) {
     console.log("Getting All Employees Error", error);
     res.status(400).json({ message: error.message });
   }
 }; // admin and all employee (sepefic Data Only)
 
-const getSingleEmployee = async () => {
+const getSingleEmployee = async (req, res) => {
   try {
     const { empId } = req.params;
 
@@ -103,6 +100,8 @@ const deleteEmployeeData = async (req, res) => {
       res.status(404).json({ error: "No employee with this ID." });
 
     await Employees.deleteOne({ _id: empId });
+
+    res.status(200).json({ message: "Your data have been deleted." });
   } catch (error) {
     console.log("Deleting Employee Error", error);
     res.status(400).json({ message: error.message });

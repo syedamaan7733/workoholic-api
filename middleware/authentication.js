@@ -11,7 +11,6 @@ const authenticateUser = (req, res, next) => {
 
     req.user = { userId, email, role };
 
-    console.log(valid);
     next();
   } catch (error) {
     console.log(error);
@@ -20,11 +19,15 @@ const authenticateUser = (req, res, next) => {
 
 const authorizeUser = (...roles) => {
   return (req, res, next) => {
-    if (!roles.includes(req.user.role))
-      res.status(401).json({
+    console.log(req.user);
+    console.log(roles.includes(req.user.role));
+
+    if (!roles.includes(req.user.role)) {
+      return res.status(401).json({
         error: true,
         message: "You are not authorized to access this route.",
       });
+    }
 
     next();
   };
