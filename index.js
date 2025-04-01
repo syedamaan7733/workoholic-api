@@ -21,6 +21,7 @@ app.use(express.json());
 app.use(
   cors({
     origin: [
+      "https://workholi.netlify.app",
       "http://localhost:5173",
       "http://localhost:5174",
       "http://192.168.162.84:5173",
