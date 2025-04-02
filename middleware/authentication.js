@@ -4,10 +4,16 @@ const authenticateUser = (req, res, next) => {
   try {
     // console.log(req.headers["authorization"], req.cookies["access_workH_tkn"]);
     const token =
-      req.header["authorization"]?.split(" ")[1] ||
+      req.headers["authorization"]?.split(" ")[1] ||
       req.cookies["access_workH_tkn"];
+    if (!token)
+      res.status(400).json({
+        message: "THere is no access token. Attached to this request.",
+      });
 
     const { userId, email, role } = isValidToken(token);
+
+    if (!userId) res.status(401).json({ message: "Token is invalid." });
 
     req.user = { userId, email, role };
 

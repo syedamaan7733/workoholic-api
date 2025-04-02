@@ -50,8 +50,6 @@ const register = async (req, res) => {
 };
 const login = async (req, res) => {
   try {
-    console.log('leak');
-    
     const { email, password } = req.body;
 
     if (!email || !password)
@@ -62,12 +60,12 @@ const login = async (req, res) => {
     const user = await Users.findOne({ email });
 
     if (!user)
-      res.status(404).json({
+      return res.status(404).json({
         message: " User not found",
       });
 
     if (!(await user.comparePassword(password)))
-      res.status(401).json({
+      return res.status(401).json({
         message: "Wrong password.",
       });
 
@@ -91,4 +89,33 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { register, login };
+const checkMe = async (req, res) => {
+  try {
+    const { userId } = req.user;
+
+    const user = await Users.findById({ _id: userId });
+
+    if (!user) res.status(404).json({ message: "No user found." });
+
+    res.status(200).json({ message: "Token authenticated.", user });
+  } catch (error) {
+    console.log(error);
+    res.status(200).json({});
+  }
+};
+
+const logout = async (req, res) => {
+  try {
+    console.log(req.user);
+    if (req.user) {
+      res.clearCookie("access_workH_tkn");
+    }
+
+    res.status(200).json({ message: "You have been logged out." });
+  } catch (error) {
+    console.log("Error from logout", error);
+    res.status(400).json({ message: error.message });
+  }
+};
+
+module.exports = { register, login, logout, checkMe };
