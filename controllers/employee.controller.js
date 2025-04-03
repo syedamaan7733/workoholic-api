@@ -5,12 +5,15 @@ const Employees = require("../models/Employees.model");
 const createEmployee = async (req, res) => {
   try {
     const { firstName, lastName, email, phone } = req.body;
-    if (!firstName || !lastName || !email || !phone)
-      res.status(400).json({ error: "Please provide the valid input." });
+    if (!firstName || !lastName || !email || !phone) {
+      return res.status(400).json({ error: "Please provide the valid input." });
+    }
 
     const employee = await Employees.create({ ...req.body });
 
-    res.status(201).json({ message: "employee have been created", employee });
+    return res
+      .status(201)
+      .json({ message: "employee have been created", employee });
   } catch (error) {
     console.log("Getting All Employees Error", error);
     res.status(400).json({ message: error.message });
@@ -33,11 +36,10 @@ const getAllEmployee = async (req, res) => {
       .skip(skip)
       .limit(limitNumber);
 
-    const totalCount = await Employees.countDocuments()
-    const totalpages = Math.ceil(totalCount/limitNumber)
+    const totalCount = await Employees.countDocuments();
+    const totalpages = Math.ceil(totalCount / limitNumber);
 
-
-    res.status(200).json({ employees, totalCount, totalpages,  });
+    return res.status(200).json({ employees, totalCount, totalpages });
   } catch (error) {
     console.log("Getting All Employees Error", error);
     res.status(400).json({ message: error.message });
@@ -66,6 +68,8 @@ const getSingleEmployee = async (req, res) => {
 //Uodate
 const updateEmployeeData = async (req, res) => {
   try {
+    console.log("Data Recieved", req.params, req.body);
+
     const { empId } = req.params;
     if (!empId)
       res.status(400).json({ error: "Please provide the userId in params." });
@@ -97,11 +101,11 @@ const deleteEmployeeData = async (req, res) => {
     const employee = await Employees.findOne({ _id: empId });
 
     if (!employee || employee.length === 0)
-      res.status(404).json({ error: "No employee with this ID." });
+     return res.status(404).json({ error: "No employee with this ID." });
 
     await Employees.deleteOne({ _id: empId });
 
-    res.status(200).json({ message: "Your data have been deleted." });
+  return  res.status(200).json({ message: "Your data have been deleted." });
   } catch (error) {
     console.log("Deleting Employee Error", error);
     res.status(400).json({ message: error.message });

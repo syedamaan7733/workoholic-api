@@ -11,10 +11,10 @@ const register = async (req, res) => {
         message: "Please provide required input [name, email, password]",
       });
 
-    const isUserExist = await Users.findOne({ email });
+    const isUserExist = await Users.findOne({ email }).select("-password");
 
     if (isUserExist)
-      res.status(401).json({
+      return res.status(401).json({
         message: "Employee has been already exist. ",
       });
 
@@ -22,7 +22,7 @@ const register = async (req, res) => {
 
     const role = isFirstAdmin ? "admin" : "employee";
 
-    const position = role === "admin" ? "DB Adminstrator" : "Intern";
+    // const position = role === "admin" ? "DB Adminstrator" : "Intern";
 
     const user = await Users.create({
       name,
@@ -38,7 +38,7 @@ const register = async (req, res) => {
       maxAge: 1000 * 60 * 60 * 24 * 2,
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       message: "User Registered Successfully.",
       user,
       accessTkn: token,
@@ -93,7 +93,7 @@ const checkMe = async (req, res) => {
   try {
     const { userId } = req.user;
 
-    const user = await Users.findById({ _id: userId });
+    const user = await Users.findById({ _id: userId }).select("-password");
 
     if (!user) res.status(404).json({ message: "No user found." });
 
