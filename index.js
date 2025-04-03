@@ -21,7 +21,7 @@ app.use(express.json());
 app.use(
   cors({
     origin: [
-      "neon-kheer-10511f.netlify.app",
+      "https://neon-kheer-10511f.netlify.app",
       "https://workholi.netlify.app",
       "http://localhost:5173",
       "http://localhost:5174",
